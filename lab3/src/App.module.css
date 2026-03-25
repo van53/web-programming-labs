@@ -1,0 +1,44 @@
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 20px;
+}
+
+.stats {
+  color: #666;
+  font-weight: 500;
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 350px 1fr; /* Ліва колонка для форми, права для списку */
+  gap: 40px;
+  align-items: start;
+}
+
+.filters {
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #f0f2f5;
+  border-radius: 8px;
+}
+
+.filters select {
+  padding: 5px;
+  border-radius: 4px;
+}
+
+/* Адаптивність для мобільних пристроїв */
+@media (max-width: 800px) {
+  .main {
+    grid-template-columns: 1fr;
+  }
+}
