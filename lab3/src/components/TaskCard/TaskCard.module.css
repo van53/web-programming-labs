@@ -1,0 +1,40 @@
+.card {
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: transform 0.2s;
+}
+
+.cardLow { border-left: 8px solid #4caf50; }
+.cardMedium { border-left: 8px solid #ffeb3b; }
+.cardHigh { border-left: 8px solid #f44336; }
+
+.title { margin: 0 0 8px 0; font-size: 1.2rem; }
+.description { color: #666; font-size: 0.9rem; margin-bottom: 12px; }
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 15px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.deleteBtn {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.deleteBtn:hover { background-color: #d9363e; }
