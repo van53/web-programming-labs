@@ -1,0 +1,13 @@
+{
+  "name": "lab2",
+  "version": "1.0.0",
+  "main": "dist/task-1.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/task-1.js",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
