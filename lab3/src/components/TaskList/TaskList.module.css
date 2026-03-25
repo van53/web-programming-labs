@@ -1,0 +1,18 @@
+.listContainer {
+  max-width: 600px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Відступи між картками */
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+  font-style: italic;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: 20px auto;
+}
