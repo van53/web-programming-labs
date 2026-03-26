@@ -3,34 +3,47 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { todosApi } from "./api/todos";
 
 export default function App() {
-  // 5.1. Стан для керованого інпуту
   const [title, setTitle] = useState("");
-  
-  // Доступ до клієнта запитів для інвалідації
   const queryClient = useQueryClient();
 
-  // 4.1. Отримання даних (вже було)
+  // Отримання списку (Read)
   const { data: todos, isLoading, isError, error } = useQuery({
     queryKey: ["todos"],
     queryFn: todosApi.getAll,
   });
 
-  // 5.2. Налаштування мутації для створення
-  const mutation = useMutation({
+  // Мутація для створення (Create)
+  const createMutation = useMutation({
     mutationFn: (newTitle: string) => 
       todosApi.create({ title: newTitle, completed: false }),
     onSuccess: () => {
-      // 5.2. Інвалідуємо кеш ["todos"], щоб список оновився автоматично
       queryClient.invalidateQueries({ queryKey: ["todos"] });
-      // Очищуємо поле введення
       setTitle("");
+    },
+  });
+
+  // 6.1. Мутація для оновлення статусу (Update)
+  const updateMutation = useMutation({
+    mutationFn: ({ id, completed }: { id: number; completed: boolean }) =>
+      todosApi.update(id, { completed }),
+    onSuccess: () => {
+      // Інвалідуємо кеш, щоб отримати актуальні дані з сервера
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+
+  // 6.2. Мутація для видалення (Delete)
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => todosApi.remove(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.trim()) {
-      mutation.mutate(title);
+      createMutation.mutate(title);
     }
   };
 
@@ -38,33 +51,32 @@ export default function App() {
   if (isError) return <p style={{ color: "red", textAlign: "center" }}>❌ Помилка: {error.message}</p>;
 
   return (
-    <div style={{ maxWidth: "500px", margin: "0 auto", padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1 style={{ fontSize: "1.5rem", marginBottom: "1.5rem" }}>📋 Todo List (Lab 5)</h1>
+    <div style={{ maxWidth: "550px", margin: "0 auto", padding: "2rem", fontFamily: "system-ui, sans-serif" }}>
+      <h1 style={{ fontSize: "1.8rem", marginBottom: "1.5rem", textAlign: "center" }}>📋 Todo List (Lab 5)</h1>
 
-      {/* 5.1. Форма створення */}
+      {/* Форма створення */}
       <form onSubmit={handleAddTodo} style={{ display: "flex", gap: "0.5rem", marginBottom: "2rem" }}>
         <input
           type="text"
           placeholder="Що потрібно зробити?"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          style={{ flex: 1, padding: "0.6rem", borderRadius: "6px", border: "1px solid #ccc" }}
+          style={{ flex: 1, padding: "0.7rem", borderRadius: "8px", border: "1px solid #cbd5e1" }}
         />
         <button
           type="submit"
-          // 5.3. Блокування кнопки під час виконання запиту
-          disabled={mutation.isPending || !title.trim()}
+          disabled={createMutation.isPending || !title.trim()}
           style={{
-            padding: "0.6rem 1.2rem",
-            background: "#3b82f6",
+            padding: "0.7rem 1.2rem",
+            background: "#2563eb",
             color: "white",
             border: "none",
-            borderRadius: "6px",
-            cursor: mutation.isPending ? "not-allowed" : "pointer",
-            opacity: mutation.isPending ? 0.7 : 1
+            borderRadius: "8px",
+            fontWeight: "bold",
+            cursor: createMutation.isPending ? "not-allowed" : "pointer"
           }}
         >
-          {mutation.isPending ? "Додавання..." : "Додати"}
+          {createMutation.isPending ? "..." : "Додати"}
         </button>
       </form>
 
@@ -74,18 +86,52 @@ export default function App() {
           <div
             key={todo.id}
             style={{
-              padding: "1rem",
+              padding: "0.75rem 1rem",
               background: todo.completed ? "#f8fafc" : "white",
               border: "1px solid #e2e8f0",
-              borderRadius: "8px",
+              borderRadius: "10px",
               display: "flex",
               alignItems: "center",
-              textDecoration: todo.completed ? "line-through" : "none",
-              color: todo.completed ? "#94a3b8" : "#1e293b",
+              justifyContent: "space-between",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
             }}
           >
-            <span style={{ marginRight: "0.75rem" }}>{todo.completed ? "✅" : "⬜"}</span>
-            {todo.title}
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flex: 1 }}>
+              {/* 6.1. Чекбокс для оновлення */}
+              <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={(e) => 
+                  updateMutation.mutate({ id: todo.id, completed: e.target.checked })
+                }
+                style={{ width: "1.2rem", height: "1.2rem", cursor: "pointer" }}
+              />
+              <span style={{ 
+                textDecoration: todo.completed ? "line-through" : "none",
+                color: todo.completed ? "#94a3b8" : "#1e293b",
+                fontSize: "1rem"
+              }}>
+                {todo.title}
+              </span>
+            </div>
+
+            {/* 6.2. Кнопка видалення */}
+            <button
+              onClick={() => deleteMutation.mutate(todo.id)}
+              disabled={deleteMutation.isPending}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#ef4444",
+                cursor: "pointer",
+                padding: "0.5rem",
+                borderRadius: "6px",
+                fontSize: "1.1rem"
+              }}
+              title="Видалити"
+            >
+              🗑️
+            </button>
           </div>
         ))}
       </div>
