@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Task, TaskPriority } from "../../types/task";
 import { useTasksStore } from "../../store/useTasksStore";
-// @ts-ignore
-import styles from "./NewTaskPage.module.css";
+import type { TaskPriority, Task } from "../../types/task";
 
 export function NewTaskPage() {
   const navigate = useNavigate();
@@ -12,20 +10,13 @@ export function NewTaskPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<TaskPriority>("medium");
-  const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-
-    if (title.trim().length < 3) {
-      setError("Назва має містити щонайменше 3 символи");
-      return;
-    }
+    if (title.trim().length < 3) return;
 
     const newTask: Task = {
-      // Використовуємо вбудований у браузер генератор ID
-      id: crypto.randomUUID(), 
+      id: crypto.randomUUID(),
       title: title.trim(),
       description: description.trim(),
       status: "todo",
@@ -33,64 +24,47 @@ export function NewTaskPage() {
       createdAt: new Date(),
     };
 
-    // Викликаємо метод зі store
     addTask(newTask);
-    
-    // Переходимо назад до списку задач
     navigate("/tasks");
   };
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>📝 Нова задача</h2>
-
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <div className={styles.field}>
-          <label htmlFor="title">Назва *</label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Введіть назву задачі"
-          />
-          {error && <span className={styles.error}>{error}</span>}
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="description">Опис</label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Додатковий опис (необов'язково)"
+    <div style={{ maxWidth: "500px", margin: "0 auto", padding: "1rem" }}>
+      <h2 style={{ marginBottom: "1.5rem" }}>📝 Нова задача</h2>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem", background: "white", padding: "1.5rem", borderRadius: "8px", border: "1px solid #ddd" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+          <label>Назва *</label>
+          <input 
+            type="text" 
+            value={title} 
+            onChange={(e) => setTitle(e.target.value)} 
+            required 
+            style={{ padding: "0.5rem", borderRadius: "4px", border: "1px solid #ccc" }}
           />
         </div>
-
-        <div className={styles.field}>
-          <label htmlFor="priority">Пріоритет</label>
-          <select
-            id="priority"
-            value={priority}
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+          <label>Опис</label>
+          <textarea 
+            value={description} 
+            onChange={(e) => setDescription(e.target.value)} 
+            style={{ padding: "0.5rem", borderRadius: "4px", border: "1px solid #ccc", minHeight: "80px" }}
+          />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+          <label>Пріоритет</label>
+          <select 
+            value={priority} 
             onChange={(e) => setPriority(e.target.value as TaskPriority)}
+            style={{ padding: "0.5rem", borderRadius: "4px", border: "1px solid #ccc" }}
           >
-            <option value="low">🟢 Низький</option>
-            <option value="medium">🟡 Середній</option>
-            <option value="high">🔴 Високий</option>
+            <option value="low">Низький</option>
+            <option value="medium">Середній</option>
+            <option value="high">Високий</option>
           </select>
         </div>
-
-        <div className={styles.actions}>
-          <button type="submit" className={styles.submitBtn}>
-            ✅ Створити задачу
-          </button>
-          <button
-            type="button"
-            className={styles.cancelBtn}
-            onClick={() => navigate("/tasks")}
-          >
-            Скасувати
-          </button>
+        <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+          <button type="submit" style={{ flex: 1, padding: "0.7rem", background: "#3b82f6", color: "white", border: "none", borderRadius: "6px", cursor: "pointer" }}>Створити</button>
+          <button type="button" onClick={() => navigate("/tasks")} style={{ padding: "0.7rem", background: "#eee", border: "none", borderRadius: "6px", cursor: "pointer" }}>Скасувати</button>
         </div>
       </form>
     </div>

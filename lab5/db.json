@@ -1,3 +1,14 @@
 {
-  "todos": []
+  "todos": [
+    {
+      "title": "Вивчити useQuery",
+      "completed": false,
+      "id": 1
+    },
+    {
+      "title": "Реалізувати useMutation",
+      "completed": false,
+      "id": 2
+    }
+  ]
 }
