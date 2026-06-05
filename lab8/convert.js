@@ -23,5 +23,5 @@ ${html}
 </html>
 `;
 
-fs.writeFileSync('report.doc', docHtml, 'utf8');
-console.log('report.doc generated');
+fs.writeFileSync('report_with_screenshots.doc', docHtml, 'utf8');
+console.log('report_with_screenshots.doc generated');
